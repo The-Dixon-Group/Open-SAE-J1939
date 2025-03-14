@@ -25,16 +25,18 @@ ENUM_J1939_RX_MSG Open_SAE_J1939_Listen_For_Messages(J1939* j1939) {
 
 		uint8_t id0 = ID >> 24;
 		uint8_t id1 = ID >> 16; /* PDU Format (PF) */
-		uint8_t DA = ID >> 8; 	/* PDU Specific (PS) or destination address which is this ECU. if DA = 0xFF = broadcast to all ECU. Sometimes DA can be an ID number too */
+		uint8_t DA = ID >> 8; 	/* PDU Specific (PS) or Destination Address (DA) which is this ECU. if DA = 0xFF = broadcast to all ECU. Sometimes DA can be an ID number too */
 		uint8_t SA = ID; 	/* Source address of the ECU that we got the message from */
 
 		uint32_t PGN;
 
 		/* Properly calculate PGN based on PF (id1) */
 		if (id1 >= 240){
-    			PGN = (ID >> 8) & 0x3FFFFUL; /* Mask for including EDP, DP, PF, and PS in the PGN */
+			// DA is PDU Specific
+			PGN = (ID >> 8) & 0x3FFFFUL; /* Mask for including EDP, DP, PF, and PS in the PGN */
 		}else{
-    			PGN = (ID >> 8) & 0x3FF00UL; /* Mask for including EDP, DP, and PF only (exclude PS) */
+			// DA is destination address
+			PGN = (ID >> 8) & 0x3FF00UL; /* Mask for including EDP, DP, and PF only (exclude PS) */
 		}
 
 		rx_msg = RX_MSG_NOT_SUPPORTED;
