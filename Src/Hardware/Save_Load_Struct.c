@@ -57,6 +57,10 @@ bool Load_Struct(uint8_t data[], uint32_t data_length, char file_name[]){
 	/* Implement your memory handler function for the PIC platform */
 #elif PROCESSOR_CHOICE == AVR
 	/* Implement your memory handler function for the AVR platform */
+#elif PROCESSOR_CHOICE == SAMC21
+    
+    return true;
+#elif PROCESSOR_CHOICE == SAME5
 #else
 	/* Read a file */
 	FILE *file = NULL;

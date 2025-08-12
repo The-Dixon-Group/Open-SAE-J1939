@@ -16,7 +16,9 @@
 #define AVR 4
 #define QT_USB 5
 #define INTERNAL_CALLBACK 6
-#define PROCESSOR_CHOICE NO_PROCESSOR
+#define SAMC21 7
+#define SAME5 8
+#define PROCESSOR_CHOICE SAMC21
 
 /* C Standard library */
 #include "../Open_SAE_J1939/C89_Library.h"

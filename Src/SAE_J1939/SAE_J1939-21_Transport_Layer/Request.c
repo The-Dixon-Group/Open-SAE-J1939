@@ -12,6 +12,7 @@
 #include "../SAE_J1939-73_Diagnostics_Layer/Diagnostics_Layer.h"
 #include "../SAE_J1939-71_Application_Layer/Application_Layer.h"
 #include "../SAE_J1939-81_Network_Management_Layer/Network_Management_Layer.h"
+#include "comms.h"
 
 /*
  * Read a PGN request from another ECU about PGN information at this ECU. All listed PGN should be here
@@ -51,105 +52,6 @@ void SAE_J1939_Read_Request(J1939 *j1939, uint8_t SA, uint8_t data[]) {
 	case PGN_TP_DT:
 		SAE_J1939_Send_Acknowledgement(j1939, SA, CONTROL_BYTE_ACKNOWLEDGEMENT_PGN_SUPPORTED, GROUP_FUNCTION_VALUE_NORMAL, PGN);
 		break;
-	case PGN_AUXILIARY_VALVE_ESTIMATED_FLOW_0:
-		ISO_11783_Response_Request_Auxiliary_Valve_Estimated_Flow(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_ESTIMATED_FLOW_1:
-		ISO_11783_Response_Request_Auxiliary_Valve_Estimated_Flow(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_ESTIMATED_FLOW_2:
-		ISO_11783_Response_Request_Auxiliary_Valve_Estimated_Flow(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_ESTIMATED_FLOW_3:
-		ISO_11783_Response_Request_Auxiliary_Valve_Estimated_Flow(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_ESTIMATED_FLOW_4:
-		ISO_11783_Response_Request_Auxiliary_Valve_Estimated_Flow(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_ESTIMATED_FLOW_5:
-		ISO_11783_Response_Request_Auxiliary_Valve_Estimated_Flow(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_ESTIMATED_FLOW_6:
-		ISO_11783_Response_Request_Auxiliary_Valve_Estimated_Flow(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_ESTIMATED_FLOW_7:
-		ISO_11783_Response_Request_Auxiliary_Valve_Estimated_Flow(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_ESTIMATED_FLOW_8:
-		ISO_11783_Response_Request_Auxiliary_Valve_Estimated_Flow(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_ESTIMATED_FLOW_9:
-		ISO_11783_Response_Request_Auxiliary_Valve_Estimated_Flow(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_ESTIMATED_FLOW_10:
-		ISO_11783_Response_Request_Auxiliary_Valve_Estimated_Flow(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_ESTIMATED_FLOW_11:
-		ISO_11783_Response_Request_Auxiliary_Valve_Estimated_Flow(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_ESTIMATED_FLOW_12:
-		ISO_11783_Response_Request_Auxiliary_Valve_Estimated_Flow(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_ESTIMATED_FLOW_13:
-		ISO_11783_Response_Request_Auxiliary_Valve_Estimated_Flow(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_ESTIMATED_FLOW_14:
-		ISO_11783_Response_Request_Auxiliary_Valve_Estimated_Flow(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_ESTIMATED_FLOW_15:
-		ISO_11783_Response_Request_Auxiliary_Valve_Estimated_Flow(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_GENERAL_PURPOSE_VALVE_ESTIMATED_FLOW:
-		ISO_11783_Response_Request_General_Purpose_Valve_Estimated_Flow(j1939, SA);
-		break;
-	case PGN_AUXILIARY_VALVE_MEASURED_POSITION_0:
-		ISO_11783_Response_Request_Auxiliary_Valve_Measured_Position(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_MEASURED_POSITION_1:
-		ISO_11783_Response_Request_Auxiliary_Valve_Measured_Position(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_MEASURED_POSITION_2:
-		ISO_11783_Response_Request_Auxiliary_Valve_Measured_Position(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_MEASURED_POSITION_3:
-		ISO_11783_Response_Request_Auxiliary_Valve_Measured_Position(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_MEASURED_POSITION_4:
-		ISO_11783_Response_Request_Auxiliary_Valve_Measured_Position(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_MEASURED_POSITION_5:
-		ISO_11783_Response_Request_Auxiliary_Valve_Measured_Position(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_MEASURED_POSITION_6:
-		ISO_11783_Response_Request_Auxiliary_Valve_Measured_Position(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_MEASURED_POSITION_7:
-		ISO_11783_Response_Request_Auxiliary_Valve_Measured_Position(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_MEASURED_POSITION_8:
-		ISO_11783_Response_Request_Auxiliary_Valve_Measured_Position(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_MEASURED_POSITION_9:
-		ISO_11783_Response_Request_Auxiliary_Valve_Measured_Position(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_MEASURED_POSITION_10:
-		ISO_11783_Response_Request_Auxiliary_Valve_Measured_Position(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_MEASURED_POSITION_11:
-		ISO_11783_Response_Request_Auxiliary_Valve_Measured_Position(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_MEASURED_POSITION_12:
-		ISO_11783_Response_Request_Auxiliary_Valve_Measured_Position(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_MEASURED_POSITION_13:
-		ISO_11783_Response_Request_Auxiliary_Valve_Measured_Position(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_MEASURED_POSITION_14:
-		ISO_11783_Response_Request_Auxiliary_Valve_Measured_Position(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
-	case PGN_AUXILIARY_VALVE_MEASURED_POSITION_15:
-		ISO_11783_Response_Request_Auxiliary_Valve_Measured_Position(j1939, PGN & 0xF); /* PGN & 0xF = valve_number */
-		break;
 	case PGN_SOFTWARE_IDENTIFICATION:
 		SAE_J1939_Response_Request_Software_Identification(j1939, SA);
 		break;
@@ -159,10 +61,18 @@ void SAE_J1939_Read_Request(J1939 *j1939, uint8_t SA, uint8_t data[]) {
 	case PGN_COMPONENT_IDENTIFICATION:
 		SAE_J1939_Response_Request_Component_Identification(j1939, SA);
 		break;
-	case PGN_PROPRIETARY_A:
-		SAE_J1939_Response_Request_Proprietary_A(j1939, SA);
-		break;
-		/* Add more else if statements here for more read request */
+	case SYSTEM_STATUS_PGN:
+        SAE_J1939_Send_System_Status(j1939, SYSTEM_STATUS_DEFAULT_PRIORITY);
+        break;
+    case COMPARTMENT_LEVELS_PGN:
+        SAE_J1939_Send_Compartment_Levels(j1939, COMPARTMENT_LEVELS_DEFAULT_PRIORITY);
+        break;
+    case COMPARTMENT_CONTENTS_PGN:
+        SAE_J1939_Send_Compartment_Contents(j1939, COMPARTMENT_CONTENTS_DEFAULT_PRIORITY);
+        break;
+    case COMPARTMENT_TEMPERATURE_PGN:
+        SAE_J1939_Send_Compartment_Temperature(j1939, COMPARTMENT_TEMPERATURE_PRIORITY);
+        break;
 	default:
 		// Check if PGN is in the Proprietary B PGN range
 		if (((PGN >= PGN_PROPRIETARY_B_START) && (PGN <= PGN_PROPRIETARY_B_END)) ||

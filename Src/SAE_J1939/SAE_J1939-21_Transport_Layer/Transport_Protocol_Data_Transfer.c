@@ -61,6 +61,7 @@ void SAE_J1939_Read_Transport_Protocol_Data_Transfer(J1939 *j1939, uint8_t SA, u
 	case PGN_COMMANDED_ADDRESS:
 		SAE_J1939_Read_Commanded_Address(j1939, complete_data);								/* Insert new name and new address to this ECU */
 		break;
+#ifdef J1939_MASTER
 	case PGN_DM1:
 		SAE_J1939_Read_Response_Request_DM1(j1939, SA, complete_data, (total_message_size-2)/4); 	/* Number of DTCs = 4 bytes per DTC excluding 2 bytes for the lamp */
 		break;
@@ -70,6 +71,7 @@ void SAE_J1939_Read_Transport_Protocol_Data_Transfer(J1939 *j1939, uint8_t SA, u
 	case PGN_DM16:
 		SAE_J1939_Read_Binary_Data_Transfer_DM16(j1939, SA, complete_data);
 		break;
+#endif
 	case PGN_SOFTWARE_IDENTIFICATION:
 		SAE_J1939_Read_Response_Request_Software_Identification(j1939, SA, complete_data);
 		break;

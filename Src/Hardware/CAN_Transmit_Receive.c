@@ -7,6 +7,7 @@
 
  /* Layer */
 #include "Hardware.h"
+#include "peripheral/can/plib_can0.h"
 
 /* This is a call back function e.g listener, that will be called once SAE J1939 data is going to be sent */
 static void (*Callback_Function_Send)(uint32_t, uint8_t, uint8_t[]) = NULL;
@@ -21,6 +22,8 @@ static void (*Callback_Function_Delay_ms)(uint8_t) = NULL;
 #elif PROCESSOR_CHOICE == PIC
 #elif PROCESSOR_CHOICE == AVR
 #elif PROCESSOR_CHOICE == QT_USB
+#elif PROCESSOR_CHOICE == SAMC21
+#elif PROCESSOR_CHOICE == SAME5
 #include "CAN_to_USB/can_to_usb.h"
 #elif PROCESSOR_CHOICE == INTERNAL_CALLBACK
 /* Nothing here because else statement should not be running */
@@ -96,6 +99,32 @@ ENUM_J1939_STATUS_CODES CAN_Send_Message(uint32_t ID, uint8_t data[]) {
 	/* Call our callback function */
 	Callback_Function_Send(ID, 8, data);
 	status = STATUS_SEND_OK;
+#elif PROCESSOR_CHOICE == SAMC21
+    CAN_TX_BUFFER TxBuffer;
+    /* Identifier */
+    TxBuffer.id = ID;
+    /* Remote Transmission Request */
+    TxBuffer.rtr = 0;
+    /* Extended Identifier */
+    TxBuffer.xtd = 1;
+    /* Error State Indicator */
+    TxBuffer.esi = 1;
+
+    /* Data Length Code */
+    TxBuffer.dlc = 8;
+    /* Bit Rate Switch */
+    TxBuffer.brs = 0;
+    /* FD Format */
+    TxBuffer.fdf = 0;
+    /* Event Type */
+    TxBuffer.efc = 0;
+    /* Message Marker */
+    //TxBuffer.mm = ;
+    
+    (void) memcpy(TxBuffer.data, data, 8);
+    
+    CAN0_MessageTransmitFifo(1, &TxBuffer);
+#elif PROCESSOR_CHOICE == SAME5
 #else
 	/* If no processor are used, use internal feedback for debugging */
 	status = Internal_Transmit(ID, data, 8);
@@ -135,6 +164,32 @@ ENUM_J1939_STATUS_CODES CAN_Send_Request(uint32_t ID, uint8_t PGN[]) {
 	/* Call our callback function */
 	Callback_Function_Send(ID, 3, PGN);
 	status = STATUS_SEND_OK;
+#elif PROCESSOR_CHOICE == SAMC21
+    CAN_TX_BUFFER TxBuffer;
+    /* Identifier */
+    TxBuffer.id = ID;
+    /* Remote Transmission Request */
+    TxBuffer.rtr = 0;
+    /* Extended Identifier */
+    TxBuffer.xtd = 1;
+    /* Error State Indicator */
+    TxBuffer.esi = 1;
+
+    /* Data Length Code */
+    TxBuffer.dlc = 3;
+    /* Bit Rate Switch */
+    TxBuffer.brs = 0;
+    /* FD Format */
+    TxBuffer.fdf = 0;
+    /* Event Type */
+    TxBuffer.efc = 0;
+    /* Message Marker */
+    //TxBuffer.mm = ;
+    
+    (void) memcpy(TxBuffer.data, PGN, 3);
+    
+    CAN0_MessageTransmitFifo(1, &TxBuffer);
+#elif PROCESSOR_CHOICE == SAME5
 #else
 	/* If no processor are used, use internal feedback for debugging */
 	status = Internal_Transmit(ID, PGN, 3);
@@ -163,6 +218,21 @@ bool CAN_Read_Message(uint32_t* ID, uint8_t data[]) {
 	QT_USB_Get_ID_Data(ID, data, &is_new_message);
 #elif PROCESSOR_CHOICE == INTERNAL_CALLBACK
 	Callback_Function_Read(ID, data, &is_new_message);
+#elif PROCESSOR_CHOICE == SAMC21
+    if(CAN0_RxFifoFillLevelGet(CAN_RX_FIFO_0) != 0)
+    {
+        //__builtin_software_breakpoint();
+        
+        //is_new_message = CAN0_MessageReceive(ID, data);
+        CAN_RX_BUFFER rx_buffer = {0};    
+        is_new_message = CAN0_MessageReceiveFifo(CAN_RX_FIFO_0, 1, &rx_buffer);
+
+        *ID = rx_buffer.id;
+        memcpy(data, rx_buffer.data, 8);
+    }
+    
+    
+#elif PROCESSOR_CHOICE == SAME5
 #else
 	/* If no processor are used, use internal feedback for debugging */
 	Internal_Receive(ID, data, &is_new_message);
@@ -200,6 +270,8 @@ void CAN_Delay(uint8_t milliseconds) {
 
 #elif PROCESSOR_CHOICE == INTERNAL_CALLBACK
 	Callback_Function_Delay_ms(milliseconds);
+#elif PROCESSOR_CHOICE == SAMC21
+#elif PROCESSOR_CHOICE == SAME5
 #else
 	/* Nothing */
 #endif

@@ -11,6 +11,7 @@
 #include "../SAE_J1939-21_Transport_Layer/Transport_Layer.h"
 #include "../../Hardware/Hardware.h"
 
+#ifdef J1939_MASTER
 /*
  * Request DM14 from another ECU
  * PGN: 0x00D900 (55552)
@@ -28,6 +29,7 @@ ENUM_J1939_STATUS_CODES SAE_J1939_Send_Request_DM14(J1939 *j1939, uint8_t DA, ui
 	data[7] = key >> 8;
 	return CAN_Send_Message(ID, data);
 }
+#endif
 
 /*
  * Read the request of DM14 memory request to other ECU about this ECU

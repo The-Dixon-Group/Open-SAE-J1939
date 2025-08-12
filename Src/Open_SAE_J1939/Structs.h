@@ -20,14 +20,14 @@
 #define INFORMATION_THIS_ECU "ECUINFO.TXT"
 
 /* This is the maximum size for transferring data and these can be changed on your own interest */
-#define MAX_TP_DT 1785U
-#define MAX_IDENTIFICATION 30U
-#define MAX_DM_FIELD 10U
-#define MAX_PROPRIETARY_A 15U
-#define MAX_PROPRIETARY_B 60U
-#define MAX_PROPRIETARY_B_PGNS 2U					/* The maximum number of PGNs that the ECUs will be aware of. 
+#define MAX_TP_DT 8U
+#define MAX_IDENTIFICATION 8U
+#define MAX_DM_FIELD 2U
+#define MAX_PROPRIETARY_A 2U
+#define MAX_PROPRIETARY_B 2U
+#define MAX_PROPRIETARY_B_PGNS 0U					/* The maximum number of PGNs that the ECUs will be aware of. 
 													 * If proprietary B PGNs are not used, set this to 0 to save memory */
-
+#define MAX_OTHER_ECUS 2U
 /* PGN: 0x00E800 - Storing the Acknowledgement from the reading process */
 struct Acknowledgement {
 	uint8_t control_byte;							/* This indicates the status of the requested information about PGN: */
@@ -70,6 +70,7 @@ struct TP_DT {
 };
 
 /* PGN: 0x00EE00 - Storing the Address claimed from the reading process */
+/* SIZE 14 BYTES */
 struct Name {
 	uint32_t identity_number;						/* Specify the ECU serial ID - 0 to 2097151 */
 	uint16_t manufacturer_code;						/* Specify the ECU manufacturer code - 0 to 2047 */
@@ -104,24 +105,38 @@ struct Proprietary {
 	struct Proprietary_B proprietary_B[MAX_PROPRIETARY_B_PGNS];
 };
 
+typedef union {
+    uint8_t byte;
+    struct{
+        unsigned SAE_lamp_protect_lamp           :2;    //bit6-7
+        unsigned SAE_lamp_amber_warning          :2;    //bit4-5
+        unsigned SAE_lamp_red_stop               :2;    //bit2-3
+        unsigned SAE_lamp_malfunction_indicator  :2;    //bit0-1
+    };
+} INDICATOR_LAMPS_t;
+
+typedef struct {
+    unsigned SPN                :19;    /* Location where the fault exist */
+    unsigned FMI                :5;     /* Type of problem */
+    unsigned conversion_method  :1;     /* If SPN_conversion_method = 1 that means Diagnostics Trouble Code are aligned using a newer conversion method. If SPN_conversion_method = 0 means one of the three Diagnostics Trouble Code conversion methods is used and ECU manufacture shall know which of the three methods is used */
+    unsigned occurance_count    :7;     /* This tells how many times failure has occurred. Every time fault goes from inactive to active, the occurence_count is incremented by 1. If fault becomes active for more than 126 times the occurence_count remains 126 */
+    unsigned active             :1;
+} DTC_t;
+
 /* PGN: 0x00FECA - Storing the DM1 Active diagnostic trouble codes from the reading process */
 struct DM1 {
 	/* These are SAE lamps can have 1 = ON and 0 = OFF */
-	uint8_t SAE_lamp_status_malfunction_indicator;
-	uint8_t SAE_lamp_status_red_stop;
-	uint8_t SAE_lamp_status_amber_warning;
-	uint8_t SAE_lamp_status_protect_lamp;
-	uint8_t SAE_flash_lamp_malfunction_indicator;
-	uint8_t SAE_flash_lamp_red_stop;
-	uint8_t SAE_flash_lamp_amber_warning;
-	uint8_t SAE_flash_lamp_protect_lamp;
+	INDICATOR_LAMPS_t status_indicators;
+    INDICATOR_LAMPS_t flash_indicators;
 
 	/* Fault location, problem and codes */
 	uint32_t SPN [MAX_DM_FIELD];						/* Location where the fault exist */
 	uint8_t FMI [MAX_DM_FIELD];							/* Type of problem */
 	uint8_t SPN_conversion_method [MAX_DM_FIELD];		/* If SPN_conversion_method = 1 that means Diagnostics Trouble Code are aligned using a newer conversion method. If SPN_conversion_method = 0 means one of the three Diagnostics Trouble Code conversion methods is used and ECU manufacture shall know which of the three methods is used */
-	uint8_t occurrence_count [MAX_DM_FIELD];			/* This tells how many times failure has occurred. Every time fault goes from inactive to active, the occurence_count is incremented by 1. If fault becomes active for more than 126 times the occurence_count remains 126 */
-	uint8_t from_ecu_address [MAX_DM_FIELD];			/* From which ECU came this message */
+    uint8_t occurrence_count [MAX_DM_FIELD];			/* This tells how many times failure has occurred. Every time fault goes from inactive to active, the occurence_count is incremented by 1. If fault becomes active for more than 126 times the occurence_count remains 126 */
+#ifdef J1939_MASTER
+    uint8_t from_ecu_address [MAX_DM_FIELD];			/* From which ECU came this message */
+#endif
 };
 
 /* PGN: 0x00D800 - Storing the DM15 response from the reading process */
@@ -143,16 +158,23 @@ struct DM16 {
 
 /* Storing the error codes from the reading process */
 struct DM {
-	uint8_t errors_dm1_active;						/* How many errors of DM1 we have right now */
-	uint8_t errors_dm2_active;						/* How many errors of DM2 is active */
-	struct DM1 dm1;									/* dm1 can only hold 1 error message at the time, but we know how many errors exists */
-	struct DM1 dm2;									/* dm2 contains previously active error from dm1 */
-	struct DM15 dm15;								/* dm15 is the memory access response from DM14 memory request */
-	struct DM16 dm16;								/* dm16 is the binary data transfer after DM15 memory response (if it was proceeded) */
+	//uint8_t errors_dm1_active;						/* How many errors of DM1 we have right now */
+	//uint8_t errors_dm2_active;						/* How many errors of DM2 is active */
+	
+    /* These are SAE lamps can have 1 = ON and 0 = OFF */
+	INDICATOR_LAMPS_t status_indicators;
+    INDICATOR_LAMPS_t flash_indicators;
+    
+    DTC_t DTC[MAX_DM_FIELD];
+    //struct DM1 dm1;									/* dm1 can only hold 1 error message at the time, but we know how many errors exists */
+	//struct DM1 dm2;									/* dm2 contains previously active error from dm1 */
+	//struct DM15 dm15;								/* dm15 is the memory access response from DM14 memory request */
+	//struct DM16 dm16;								/* dm16 is the binary data transfer after DM15 memory response (if it was proceeded) */
 	/* Add more DM here */
 };
 
 /* PGN: 0x00FEDA - Storing the software identification from the reading process */
+/* SIZE 2 + MAX_IDENTIFICATION BYTES */
 struct Software_identification {
 	uint8_t number_of_fields;						/* How many numbers contains in the identifications array */
 	uint8_t identifications[MAX_IDENTIFICATION];	/* This can be for example ASCII */
@@ -160,6 +182,7 @@ struct Software_identification {
 };
 
 /* PGN: 0x00FDC5 - Storing the ECU identification from the reading process */
+/* SIZE 2 + (4*MAX_IDENTIFICATION) BYTES */
 struct ECU_identification {
 	uint8_t length_of_each_field;					/* The real length of the fields - Not part of J1939 standard, only for the user */
 	uint8_t ecu_part_number[MAX_IDENTIFICATION];	/* ASCII field */
@@ -170,6 +193,7 @@ struct ECU_identification {
 };
 
 /* PGN: 0x00FEEB - Storing the component identification from the reading process */
+/* SIZE 2 + (4*MAX_IDENTIFICATION) BYTES */
 struct Component_identification {
 	uint8_t length_of_each_field;					/* The real length of the fields - Not part of J1939 standard, only for the user  */
 	uint8_t component_product_date[MAX_IDENTIFICATION];	/* ASCII field */
@@ -180,10 +204,11 @@ struct Component_identification {
 };
 
 /* Storing the identifications from the reading process */
+/* SIZE 6 + (9 * MAX_IDENTIFICATION) BYTES */
 struct Identifications {
-	struct Software_identification software_identification;
-	struct ECU_identification ecu_identification;
-	struct Component_identification component_identification;
+	struct Software_identification software_identification;     //2 + MAX_IDENTIFICATION BYTES
+	struct ECU_identification ecu_identification;               //2 + (4*MAX_IDENTIFICATION) BYTES
+	struct Component_identification component_identification;   //2 + (4*MAX_IDENTIFICATION) BYTES 
 };
 
 /* PGN: 0x00FE30 (65072) to 0x00FE3F (65087) */
@@ -234,10 +259,11 @@ struct Auxiliary_valve_measured_position {
 };
 
 /* This struct is used for save information and load information from hard drive/SD-card/flash etc. due to the large size of J1939 */
+/* SIZE 21 + (9 * MAX_IDENTIFICATION) BYTES */
 typedef struct{
-	struct Name this_name;
-	uint8_t this_ECU_address;
-	struct Identifications this_identifications;
+	struct Name this_name;                          //14 BYTES
+	uint8_t this_ECU_address;                       //1 BYTE
+	struct Identifications this_identifications;    //6 + (9 * MAX_IDENTIFICATION) BYTES
 } Information_this_ECU;
 
 /* This struct is used for handling J1939 information */
@@ -250,7 +276,7 @@ typedef struct {
 	/* Store addresses of ECU */
 	uint8_t number_of_other_ECU;				 	/* How many other ECU are connected */
 	uint8_t number_of_cannot_claim_address;			/* How many ECU addresses could not claim their address */
-	uint8_t other_ECU_address[255];					/* Store other ECU addresses here. Address 0xFF is the broad cast address, not an ECU address */
+	uint8_t other_ECU_address[MAX_OTHER_ECUS];	    /* Store other ECU addresses here. Address 0xFF is the broad cast address, not an ECU address */
 
 	/* Temporary store the information from the reading process - SAE J1939 */
 	struct Name from_other_ecu_name;
@@ -265,22 +291,10 @@ typedef struct {
 	struct TP_CM this_ecu_tp_cm;
 	struct TP_DT this_ecu_tp_dt;
 
-	/* Temporary store the valve information from the reading process - ISO 11783-7 */
-	struct Auxiliary_valve_estimated_flow from_other_ecu_auxiliary_valve_estimated_flow[16];
-	struct Auxiliary_valve_measured_position from_other_ecu_auxiliary_valve_measured_position[16];
-	struct General_purpose_valve_estimated_flow from_other_ecu_general_purpose_valve_estimated_flow;
-	struct Auxiliary_valve_command from_other_ecu_auxiliary_valve_command[16];
-	struct General_purpose_valve_command from_other_ecu_general_purpose_valve_command;
-
 	/* For ID information about this ECU - SAE J1939 */
 	Information_this_ECU information_this_ECU;
 	struct DM this_dm;
 	struct Proprietary this_proprietary;
-
-	/* For valve information about this ECU - ISO 11783-7 */
-	struct Auxiliary_valve_estimated_flow this_auxiliary_valve_estimated_flow[16];
-	struct Auxiliary_valve_measured_position this_auxiliary_valve_measured_position[16];
-	struct General_purpose_valve_estimated_flow this_general_purpose_valve_estimated_flow;
 
 } J1939;
 

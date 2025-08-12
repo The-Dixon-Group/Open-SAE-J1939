@@ -51,7 +51,7 @@ ENUM_J1939_STATUS_CODES SAE_J1939_Send_Binary_Data_Transfer_DM16(J1939 *j1939, u
 	}
 }
 
-
+#ifdef J1939_MASTER
 /*
  * Read binary data transfer
  * PGN: 0x00D700 (55040)
@@ -65,4 +65,4 @@ void SAE_J1939_Read_Binary_Data_Transfer_DM16(J1939 *j1939, uint8_t SA, uint8_t 
 		j1939->from_other_ecu_dm.dm16.raw_binary_data[i] = data[i+1];
 	}
 }
-
+#endif
