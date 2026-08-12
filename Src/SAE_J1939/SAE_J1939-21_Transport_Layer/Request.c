@@ -64,15 +64,27 @@ void SAE_J1939_Read_Request(J1939 *j1939, uint8_t SA, uint8_t data[]) {
 	case SYSTEM_STATUS_PGN:
         SAE_J1939_Send_System_Status(j1939, SYSTEM_STATUS_DEFAULT_PRIORITY);
         break;
-    case COMPARTMENT_LEVELS_PGN:
-        SAE_J1939_Send_Compartment_Levels(j1939, COMPARTMENT_LEVELS_DEFAULT_PRIORITY);
+    case COMPARTMENT_LEVELS12_PGN:
+    case COMPARTMENT_LEVELS34_PGN:
+    case COMPARTMENT_LEVELS56_PGN:
+    case COMPARTMENT_LEVELS78_PGN:
+    {
+        uint8_t compartments = (PGN & 0xFF)-1;
+        SAE_J1939_Send_Compartment_Levels(j1939, compartments, COMPARTMENT_LEVELS_DEFAULT_PRIORITY);
         break;
+    }
     case COMPARTMENT_CONTENTS_PGN:
         SAE_J1939_Send_Compartment_Contents(j1939, COMPARTMENT_CONTENTS_DEFAULT_PRIORITY);
         break;
-    case COMPARTMENT_TEMPERATURE_PGN:
-        SAE_J1939_Send_Compartment_Temperature(j1939, COMPARTMENT_TEMPERATURE_PRIORITY);
+    case COMPARTMENT_TEMPERATURE12_PGN:
+    case COMPARTMENT_TEMPERATURE34_PGN:
+    case COMPARTMENT_TEMPERATURE56_PGN:
+    case COMPARTMENT_TEMPERATURE78_PGN:
+    {
+        uint8_t compartments = (PGN & 0xFF)-6;
+        SAE_J1939_Send_Compartment_Temperature(j1939, compartments, COMPARTMENT_TEMPERATURE_PRIORITY);
         break;
+    }
 	default:
 		// Check if PGN is in the Proprietary B PGN range
 		if (((PGN >= PGN_PROPRIETARY_B_START) && (PGN <= PGN_PROPRIETARY_B_END)) ||
