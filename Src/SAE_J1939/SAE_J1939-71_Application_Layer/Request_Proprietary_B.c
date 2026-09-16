@@ -11,6 +11,7 @@
 #include "../SAE_J1939-21_Transport_Layer/Transport_Layer.h"
 #include "../../Hardware/Hardware.h"
 #include "comms.h"
+#include "definitions.h"
 /*
  * Request Proprietary B to another ECU
  * PGN: 0x00FF00 <-> 0x00FFFF
@@ -98,11 +99,21 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
      */
     switch (PGN)
     {
-        case SET_PRODUCT_INDEX_GN:
-        {
-            uint8_t productIndex = data[0];
 
-            SetProdIndex(productIndex);
+        case SET_PRODUCT_INDEX_PGN:
+        {
+            /* The first data byte identifies the compartment the broadcast
+            * message is intended for. Only process the message when it matches
+            * this ECU's current compartment position. The second data byte
+            * contains the product index to be applied to that display.
+            */
+            uint8_t broadcastcompartmentPosition = data[0];
+            uint8_t productIndex = data[1];
+            
+            
+            if (broadcastcompartmentPosition == compartmentPosition){
+                SetProdIndex(productIndex);
+            }
             break;
         }
 
