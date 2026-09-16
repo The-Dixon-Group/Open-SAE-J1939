@@ -10,7 +10,7 @@
  /* Layers */
 #include "../SAE_J1939-21_Transport_Layer/Transport_Layer.h"
 #include "../../Hardware/Hardware.h"
-
+#include "comms.h"
 /*
  * Request Proprietary B to another ECU
  * PGN: 0x00FF00 <-> 0x00FFFF
@@ -92,4 +92,31 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
 	uint16_t total_bytes = proprietary_B->total_bytes;
 	memcpy(proprietary_B->data, data, total_bytes);
 	proprietary_B->from_ecu_address = SA;
-}
+    
+    /*
+     * Handle specific Proprietary B PGNs here.
+     */
+    switch (PGN)
+    {
+        case SET_PRODUCT_INDEX_GN:
+        {
+            uint8_t productIndex = data[0];
+
+            SetProdIndex(productIndex);
+            break;
+        }
+
+        /*
+         * Add more PGNs here as needed.
+         *
+         * case 0xFF10:
+         * {
+         *     ...
+         *     break;
+         * }
+         */
+
+        default:
+            break;
+    }
+    }

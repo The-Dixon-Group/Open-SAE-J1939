@@ -13,7 +13,6 @@
 #include "../SAE_J1939-71_Application_Layer/Application_Layer.h"
 #include "../SAE_J1939-81_Network_Management_Layer/Network_Management_Layer.h"
 #include "comms.h"
-
 /*
  * Read a PGN request from another ECU about PGN information at this ECU. All listed PGN should be here
  * PGN: 0x00EA00 (59904)
@@ -70,11 +69,11 @@ void SAE_J1939_Read_Request(J1939 *j1939, uint8_t SA, uint8_t data[]) {
     case COMPARTMENT_LEVELS78_PGN:
     {
         uint8_t compartments = (PGN & 0xFF)-1;
-        SAE_J1939_Send_Compartment_Levels(j1939, compartments, COMPARTMENT_LEVELS_DEFAULT_PRIORITY);
+        //SAE_J1939_Send_Compartment_Levels(j1939, compartments, COMPARTMENT_LEVELS_DEFAULT_PRIORITY);
         break;
     }
     case COMPARTMENT_CONTENTS_PGN:
-        SAE_J1939_Send_Compartment_Contents(j1939, COMPARTMENT_CONTENTS_DEFAULT_PRIORITY);
+        //SAE_J1939_Send_Compartment_Contents(j1939, COMPARTMENT_CONTENTS_DEFAULT_PRIORITY);
         break;
     case COMPARTMENT_TEMPERATURE12_PGN:
     case COMPARTMENT_TEMPERATURE34_PGN:
@@ -82,9 +81,14 @@ void SAE_J1939_Read_Request(J1939 *j1939, uint8_t SA, uint8_t data[]) {
     case COMPARTMENT_TEMPERATURE78_PGN:
     {
         uint8_t compartments = (PGN & 0xFF)-6;
-        SAE_J1939_Send_Compartment_Temperature(j1939, compartments, COMPARTMENT_TEMPERATURE_PRIORITY);
+        //SAE_J1939_Send_Compartment_Temperature(j1939, compartments, COMPARTMENT_TEMPERATURE_PRIORITY);
         break;
     }
+	case COMPARTMENT_POSITION_PGN:
+        SAE_J1939_Send_Compartment_Position(j1939, LOW_PRIORITY);
+        break;
+
+
 	default:
 		// Check if PGN is in the Proprietary B PGN range
 		if (((PGN >= PGN_PROPRIETARY_B_START) && (PGN <= PGN_PROPRIETARY_B_END)) ||
