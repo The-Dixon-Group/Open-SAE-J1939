@@ -116,7 +116,15 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
             }
             break;
         }
-
+        
+        case PRODUCT_LIST_PGN:
+        {
+            uint8_t broadcastcompartmentPosition = data[0];
+            if (broadcastcompartmentPosition == compartmentPosition){
+                //Send Over Product List if Compartment Matches
+            }
+            break;
+        }
         /*
          * Add more PGNs here as needed.
          *
