@@ -88,7 +88,9 @@ void SAE_J1939_Read_Request(J1939 *j1939, uint8_t SA, uint8_t data[]) {
         SAE_J1939_Send_Compartment_Position(j1939, LOW_PRIORITY);
         break;
 
-
+	case PRODUCT_LIST_PGN:
+        
+        break;
 	default:
 		// Check if PGN is in the Proprietary B PGN range
 		if (((PGN >= PGN_PROPRIETARY_B_START) && (PGN <= PGN_PROPRIETARY_B_END)) ||

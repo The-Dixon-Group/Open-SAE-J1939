@@ -20,7 +20,7 @@
 #define INFORMATION_THIS_ECU "ECUINFO.TXT"
 
 /* This is the maximum size for transferring data and these can be changed on your own interest */
-#define MAX_TP_DT 1785U
+#define MAX_TP_DT 128U
 #define MAX_IDENTIFICATION 8U
 #define MAX_DM_FIELD 2U
 #define MAX_PROPRIETARY_A 2U

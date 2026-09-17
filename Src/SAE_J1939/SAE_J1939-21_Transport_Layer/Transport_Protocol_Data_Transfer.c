@@ -107,7 +107,7 @@ ENUM_J1939_STATUS_CODES SAE_J1939_Send_Transport_Protocol_Data_Transfer(J1939 *j
 	uint8_t i, j, package[8];
 	uint16_t bytes_sent = 0;
 	ENUM_J1939_STATUS_CODES status = STATUS_SEND_OK;
-	switch (j1939->from_other_ecu_tp_cm.control_byte) {
+	switch (j1939->this_ecu_tp_cm.control_byte) {
 	case CONTROL_BYTE_TP_CM_BAM:
 		for (i = 1; i <= j1939->this_ecu_tp_cm.number_of_packages_being_transmitted; i++) {
 			package[0] = i; 																	/* Number of package */
@@ -123,9 +123,7 @@ ENUM_J1939_STATUS_CODES SAE_J1939_Send_Transport_Protocol_Data_Transfer(J1939 *j
 			/* Transmitt message */
 			status = CAN_Send_Message(ID, package);
 			CAN_Delay(100);																		/* Important CAN delay according to standard */
-			if (status != STATUS_SEND_OK) {
-				break;
-			}
+
 		}
 		break;
 	case CONTROL_BYTE_TP_CM_CTS:
