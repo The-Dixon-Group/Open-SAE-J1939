@@ -11,7 +11,7 @@
 #include "../Hardware/Hardware.h"
 
 /* Load our ECU parameters into J1939 structure. Very useful if you want your ECU remember its NAME + address + identifications at startup. */
-bool Open_SAE_J1939_Startup_ECU(J1939* j1939)  {
+bool Open_SAE_J1939_Startup_ECU(J1939* j1939, uint8_t address_pool_low, uint8_t address_pool_high, uint32_t NAME_ID)  {
 	//uint32_t ECU_information_length = sizeof(Information_this_ECU);
 	//uint8_t ECU_information_data[sizeof(Information_this_ECU)];
 	//memset(ECU_information_data, 0, ECU_information_length);
@@ -19,7 +19,9 @@ bool Open_SAE_J1939_Startup_ECU(J1939* j1939)  {
 	//	return false; /* Problems occurs */
 	//}
     //memcpy(&j1939->information_this_ECU, (Information_this_ECU*)ECU_information_data, ECU_information_length);
-    j1939->information_this_ECU.this_ECU_address = 0xFE;
+    j1939->information_this_ECU.min_address_range = address_pool_low;
+    j1939->information_this_ECU.max_address_range = address_pool_high;
+    j1939->information_this_ECU.this_ECU_address = j1939->information_this_ECU.min_address_range;
     
     //SAE Settings
     j1939->information_this_ECU.this_name.industry_group = 0;
@@ -32,7 +34,7 @@ bool Open_SAE_J1939_Startup_ECU(J1939* j1939)  {
     j1939->information_this_ECU.this_name.vehicle_system_instance = 0;
     j1939->information_this_ECU.this_name.function_instance = 0;
     j1939->information_this_ECU.this_name.ECU_instance = 0;
-    j1939->information_this_ECU.this_name.identity_number = 2097155;
+    j1939->information_this_ECU.this_name.identity_number = NAME_ID;
     
 	
 	/* If we are going to send and receive the ECU identification and component identification, we need to specify the size of them */
