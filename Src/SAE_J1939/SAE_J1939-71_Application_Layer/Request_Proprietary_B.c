@@ -99,7 +99,9 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
      */
     switch (PGN)
     {
-
+#if PRODUCT == CHECKMATEII
+        
+#elif PRODUCT == DIGITAL_PRODUCT_INDICATOR
         case SET_PRODUCT_INDEX_PGN:
         {
             /* The first data byte identifies the compartment the broadcast
@@ -126,7 +128,7 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
             }
             break;
         }
-        
+#endif
         /*
          * Add more PGNs here as needed.
          *

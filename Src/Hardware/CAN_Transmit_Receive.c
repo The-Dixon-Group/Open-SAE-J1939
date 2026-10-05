@@ -271,7 +271,11 @@ void CAN_Delay(uint8_t milliseconds) {
 #elif PROCESSOR_CHOICE == INTERNAL_CALLBACK
 	Callback_Function_Delay_ms(milliseconds);
 #elif PROCESSOR_CHOICE == SAMC21
+#if PRODUCT == CHECKMATEII
+    
+#elif PRODUCT == DIGITAL_PRODUCT_INDICATOR
     SYSTICK_DelayMs(milliseconds);
+#endif    
 #elif PROCESSOR_CHOICE == SAME5
 #else
 	/* Nothing */
