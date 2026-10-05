@@ -13,6 +13,7 @@
 
 /*
  * Send request address claimed to other ECU. Every time we asking addresses from other ECU, then we clear our storage of other ECU
+ * This should be sent using Null address (254) as source address, if unit does not have address yet
  * PGN: 0x00EE00 (60928)
  */
 ENUM_J1939_STATUS_CODES SAE_J1939_Send_Request_Address_Claimed(J1939 *j1939, uint8_t DA) {
@@ -52,35 +53,34 @@ ENUM_J1939_STATUS_CODES SAE_J1939_Read_Response_Request_Address_Claimed(J1939 *j
         uint32_t this_NAME_H = ((uint32_t)j1939->information_this_ECU.this_name.arbitrary_address_capable << 31);
         this_NAME_H |= ((uint32_t)j1939->information_this_ECU.this_name.industry_group << 28);
         this_NAME_H |= ((uint32_t)j1939->information_this_ECU.this_name.vehicle_system_instance << 31);
-        this_NAME_H |= ((uint32_t)j1939->information_this_ECU.this_name.vehicle_system << 31);
+        this_NAME_H |= ((uint32_t)j1939->information_this_ECU.this_name.vehicle_system << 17);
         this_NAME_H |= ((uint32_t)j1939->information_this_ECU.this_name.function << 8);
         this_NAME_H |= ((uint32_t)j1939->information_this_ECU.this_name.function_instance);
-        uint32_t this_NAME_L = ((uint32_t)j1939->information_this_ECU.this_name.manufacturer_code << 22);
+        
+        uint32_t this_NAME_L = ((uint32_t)j1939->information_this_ECU.this_name.manufacturer_code << 21);
         this_NAME_L |= ((uint32_t)j1939->information_this_ECU.this_name.identity_number);
         
-        uint32_t source_NAME_H = (((uint32_t)data[0]<<24) | ((uint32_t)data[1]<<16) | ((uint32_t)data[2]<<8) | (uint32_t)data[3]);
-        uint32_t source_NAME_L = (((uint32_t)data[4]<<24) | ((uint32_t)data[5]<<16) | ((uint32_t)data[6]<<8) | (uint32_t)data[7]);
+        uint32_t source_NAME_H = (((uint32_t)data[7]<<24) | ((uint32_t)data[6]<<16) | ((uint32_t)data[5]<<8) | (uint32_t)data[4]);
+        uint32_t source_NAME_L = (((uint32_t)data[3]<<24) | ((uint32_t)data[2]<<16) | ((uint32_t)data[1]<<8) | (uint32_t)data[0]);
         
         //compare NAME. lower value(higher priority) gets the name
         if(this_NAME_H > source_NAME_H)
         {
-            //this is higher, other CA getes address
-            //SAE_J1939_Send_Address_Not_Claimed(j1939);
-            
-            return STATUS_SEND_ERROR;
+            //this is higher, other CA getes address                      
+            return SAE_J1939_Claim_Next_Address(j1939);
         }else{
-            //same or less
+            //this_NAME_H is same or less
+            
             if(this_NAME_L > source_NAME_L)
             {
-                //this is higher, other CA getes address
-                //SAE_J1939_Send_Address_Not_Claimed(j1939);
-                
-                return STATUS_SEND_ERROR;
+                //this_NAME_L is higher, other CA getes address                      
+                return SAE_J1939_Claim_Next_Address(j1939);
             }else{
-                //send address claim
-                //SAE_J1939_Response_Request_Address_Claimed(j1939);
-                
-                return STATUS_SEND_BUSY;
+                //this_NAME_L is same or less, so this device gets priority on the address
+                //send address claim so other device will select next address
+                SAE_J1939_Response_Request_Address_Claimed(j1939);
+
+                return STATUS_SEND_OK;
             }
         }
 	}
@@ -109,4 +109,20 @@ ENUM_J1939_STATUS_CODES SAE_J1939_Read_Response_Request_Address_Claimed(J1939 *j
 	}
     
     return STATUS_SEND_OK;
+}
+
+ENUM_J1939_STATUS_CODES SAE_J1939_Claim_Next_Address(J1939 *j1939)
+{
+    //increment address
+    j1939->information_this_ECU.this_ECU_address++;
+
+    if(j1939->information_this_ECU.this_ECU_address > j1939->information_this_ECU.max_address_range)
+    {
+        return STATUS_SEND_ERROR;
+    }
+
+    //send 'Address claim' 60928 (0xEE00)
+    SAE_J1939_Response_Request_Address_Claimed(j1939);
+    
+    return STATUS_SEND_BUSY;
 }
