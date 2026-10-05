@@ -10,7 +10,8 @@
  /* Layers */
 #include "../SAE_J1939-21_Transport_Layer/Transport_Layer.h"
 #include "../../Hardware/Hardware.h"
-
+#include "comms.h"
+#include "definitions.h"
 /*
  * Request Proprietary B to another ECU
  * PGN: 0x00FF00 <-> 0x00FFFF
@@ -92,4 +93,51 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
 	uint16_t total_bytes = proprietary_B->total_bytes;
 	memcpy(proprietary_B->data, data, total_bytes);
 	proprietary_B->from_ecu_address = SA;
-}
+    
+    /*
+     * Handle specific Proprietary B PGNs here.
+     */
+    switch (PGN)
+    {
+
+        case SET_PRODUCT_INDEX_PGN:
+        {
+            /* The first data byte identifies the compartment the broadcast
+            * message is intended for. Only process the message when it matches
+            * this ECU's current compartment position. The second data byte
+            * contains the product index to be applied to that display.
+            */
+            uint8_t broadcastcompartmentPosition = data[0];
+            uint8_t productIndex = data[1];
+            
+            
+            if (broadcastcompartmentPosition == compartmentPosition){
+                SetProdIndex(productIndex);
+            }
+            break;
+        }
+        
+        case REQUEST_PRODUCT_LIST_PGN:
+        {
+            uint8_t broadcastcompartmentPosition = data[0];
+            if (broadcastcompartmentPosition == compartmentPosition){
+                //Send Over Product List if Compartment Matches
+                SAE_J1939_Send_Product_List(j1939,J1939_BROADCAST_ADDRESS);
+            }
+            break;
+        }
+        
+        /*
+         * Add more PGNs here as needed.
+         *
+         * case 0xFF10:
+         * {
+         *     ...
+         *     break;
+         * }
+         */
+
+        default:
+            break;
+    }
+    }

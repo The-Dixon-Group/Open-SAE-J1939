@@ -271,6 +271,7 @@ void CAN_Delay(uint8_t milliseconds) {
 #elif PROCESSOR_CHOICE == INTERNAL_CALLBACK
 	Callback_Function_Delay_ms(milliseconds);
 #elif PROCESSOR_CHOICE == SAMC21
+    SYSTICK_DelayMs(milliseconds);
 #elif PROCESSOR_CHOICE == SAME5
 #else
 	/* Nothing */
