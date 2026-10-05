@@ -264,6 +264,8 @@ typedef struct{
 	struct Name this_name;                          //14 BYTES
 	uint8_t this_ECU_address;                       //1 BYTE
 	struct Identifications this_identifications;    //6 + (9 * MAX_IDENTIFICATION) BYTES
+    uint8_t min_address_range;
+    uint8_t max_address_range;
 } Information_this_ECU;
 
 /* This struct is used for handling J1939 information */
