@@ -12,6 +12,7 @@
 #include "../../Hardware/Hardware.h"
 #include "comms.h"
 #include "definitions.h"
+#include "products.h"
 /*
  * Request Proprietary B to another ECU
  * PGN: 0x00FF00 <-> 0x00FFFF
@@ -82,52 +83,155 @@ ENUM_J1939_STATUS_CODES SAE_J1939_Response_Request_Proprietary_B(J1939* j1939, u
  * Store the Proprietary B about other ECU
  * PGN: 0x00FF00 <-> 0x00FFFF
  */
-void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uint32_t PGN, uint8_t data[]) {
-	struct Proprietary_B * proprietary_B = Get_Proprietary_B_By_PGN(&j1939->from_other_ecu_proprietary, PGN);
+void SAE_J1939_Read_Response_Request_Proprietary_B(
+    J1939* j1939,
+    uint8_t SA,
+    uint32_t PGN,
+    uint8_t data[])
+{
+    struct Proprietary_B * proprietary_B =
+        Get_Proprietary_B_By_PGN(
+            &j1939->from_other_ecu_proprietary,
+            PGN);
 
-	if (proprietary_B == NULL) /* Proprietary B is not expected, don't fill the data anywhere */
-	{
-		return;
-	}
+    if (proprietary_B == NULL)
+    {
+        return;
+    }
 
-	uint16_t total_bytes = proprietary_B->total_bytes;
-	memcpy(proprietary_B->data, data, total_bytes);
-	proprietary_B->from_ecu_address = SA;
-    
+    uint16_t message_size =
+        j1939->from_other_ecu_tp_cm.total_message_size_being_transmitted;
+
+    if (message_size > MAX_TP_DT)
+    {
+        return;
+    }
+
+    static uint8_t local_data[MAX_TP_DT + 1];
+
+    memset(local_data, 0, sizeof(local_data));
+    memcpy(local_data, data, message_size);
+    local_data[message_size] = '\0';
+
+    uint16_t total_bytes = proprietary_B->total_bytes;
+
+    if (total_bytes > message_size)
+    {
+        total_bytes = message_size;
+    }
+
+    memcpy(proprietary_B->data, data, total_bytes);
+    proprietary_B->from_ecu_address = SA;
+
     /*
      * Handle specific Proprietary B PGNs here.
      */
     switch (PGN)
     {
 #if PRODUCT == CHECKMATEII
-        
+
 #elif PRODUCT == DIGITAL_PRODUCT_INDICATOR
+
         case SET_PRODUCT_INDEX_PGN:
         {
             /* The first data byte identifies the compartment the broadcast
-            * message is intended for. Only process the message when it matches
-            * this ECU's current compartment position. The second data byte
-            * contains the product index to be applied to that display.
-            */
+             * message is intended for. Only process the message when it
+             * matches this ECU's current compartment position.
+             */
             uint8_t broadcastcompartmentPosition = data[0];
             uint8_t productIndex = data[1];
-            
-            
-            if (broadcastcompartmentPosition == compartmentPosition){
+
+            if (broadcastcompartmentPosition == compartmentPosition)
+            {
                 SetProdIndex(productIndex);
             }
+
             break;
         }
-        
+
         case REQUEST_PRODUCT_LIST_PGN:
         {
             uint8_t broadcastcompartmentPosition = data[0];
-            if (broadcastcompartmentPosition == compartmentPosition){
-                //Send Over Product List if Compartment Matches
-                SAE_J1939_Send_Product_List(j1939,J1939_BROADCAST_ADDRESS);
+
+            if (broadcastcompartmentPosition == compartmentPosition)
+            {
+                // Send over product list if compartment matches.
+                SAE_J1939_Send_Product_List(
+                    j1939,
+                    J1939_BROADCAST_ADDRESS);
             }
+
             break;
         }
+
+        case MODIFY_PRODUCT_INDEX_PGN:
+        {
+            char *message = (char *)local_data;
+
+            char *compartmentText = strtok(message, ",");
+            char *themeText = strtok(NULL, ",");
+            char *line1Text = strtok(NULL, ",");
+            char *line2Text = strtok(NULL, ",");
+            char *shapeText = strtok(NULL, ",");
+            char *indexText = strtok(NULL, ",");
+
+            if (compartmentText == NULL ||
+                themeText == NULL ||
+                line1Text == NULL ||
+                line2Text == NULL ||
+                shapeText == NULL ||
+                indexText == NULL)
+            {
+                break;
+            }
+
+            int compartmentValue = atoi(compartmentText);
+            int themeValue = atoi(themeText);
+            int shapeValue = atoi(shapeText);
+            int indexValue = atoi(indexText);
+
+            // Process only messages intended for this compartment.
+            if (compartmentValue != compartmentPosition)
+            {
+                break;
+            }
+
+            // Validate the theme.
+            if (themeValue < 0 || themeValue > 1)
+            {
+                break;
+            }
+
+            // Product index 0 is reserved for the factory-only product.
+            if (indexValue < 1 || indexValue >= product_count)
+            {
+                break;
+            }
+
+            Modifyprod(
+                (ProductTheme)themeValue,
+                line1Text,
+                line2Text,
+                (ProductShape)shapeValue,
+                (uint8_t)indexValue);
+
+            break;
+
+        }
+
+        case ERASE_PRODUCT_INDEX_PGN:
+        {
+            uint8_t broadcastcompartmentPosition = data[0];
+            uint8_t productIndex = data[1];
+            
+            if (broadcastcompartmentPosition == compartmentPosition)
+            {
+                Eraseprod(productIndex);
+            }
+
+            break;
+        }
+
 #endif
         /*
          * Add more PGNs here as needed.
