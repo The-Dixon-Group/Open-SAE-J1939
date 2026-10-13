@@ -89,6 +89,9 @@ void SAE_J1939_Read_Request(J1939 *j1939, uint8_t SA, uint8_t data[]) {
 	case COMPARTMENT_POSITION_PGN:
         SAE_J1939_Send_Compartment_Position(j1939, LOW_PRIORITY);
         break;
+	case COMPARTMENT_TEMPERATURE_PGN:
+        SAE_J1939_Send_Compartment_Temperature(j1939, LOW_PRIORITY);
+        break;
 #endif
 	default:
 		// Check if PGN is in the Proprietary B PGN range
