@@ -24,8 +24,8 @@
 #include "../Open_SAE_J1939/C89_Library.h"
 
 /* Enums */
-#include "../SAE_J1939/SAE_J1939_Enums/Enum_DM14_DM15.h"
-#include "../SAE_J1939/SAE_J1939_Enums/Enum_Send_Status.h"
+#include "SAE_J1939/SAE_J1939_Enums/Enum_DM14_DM15.h"
+#include "SAE_J1939/SAE_J1939_Enums/Enum_Send_Status.h"
 
 #ifdef __cplusplus
 extern "C" {
