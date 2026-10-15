@@ -8,8 +8,8 @@
 #include "Application_Layer.h"
 
 /* Layers */
-#include "../../SAE_J1939/SAE_J1939-21_Transport_Layer/Transport_Layer.h"
-#include "../../Hardware/Hardware.h"
+#include "SAE_J1939/SAE_J1939-21_Transport_Layer/Transport_Layer.h"
+#include "Hardware/Hardware.h"
 
 /*
  * Send a general purpose valve command to an ECU

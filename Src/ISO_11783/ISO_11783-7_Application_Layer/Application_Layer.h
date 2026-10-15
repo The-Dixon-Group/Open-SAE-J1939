@@ -12,7 +12,7 @@
 #include "Src/Open_SAE_J1939/Structs.h"
 #include "SAE_J1939/SAE_J1939_Enums/Enum_PGN.h"
 #include "SAE_J1939/SAE_J1939_Enums/Enum_Send_Status.h"
-#include "../ISO_11783_Enums/Enum_Valves.h"
+#include "ISO_11783_Enums/Enum_Valves.h"
 
 #ifdef __cplusplus
 extern "C" {
