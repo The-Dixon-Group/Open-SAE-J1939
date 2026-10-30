@@ -213,7 +213,8 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(
                 line1Text,
                 line2Text,
                 (ProductShape)shapeValue,
-                (uint8_t)indexValue);
+                (uint8_t)indexValue,
+                true);
 
             break;
 
