@@ -137,8 +137,28 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
             * contains the product index to be applied to that display.
             */
             uint8_t uut_command = data[0];
-            (void)uut_command;
             __builtin_software_breakpoint();
+            switch(uut_command){
+                case CMD_01:
+                    // Handle command 0x01
+                    break;
+
+                case CMD_02:
+                    // Handle command 0x02
+                    break;
+
+                case CMD_03:
+                    // Handle command 0x03
+                    break;
+
+                case CMD_30:
+                    // Handle command 0x30
+                    break;
+
+                default:
+                    // Unknown or unsupported command
+                    break;
+                }
         }
 #endif
         /*
