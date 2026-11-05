@@ -128,6 +128,18 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
             }
             break;
         }
+#elif PRODUCT == CHECKMATEII_TESTER
+        case TEST_FIRMWARE_PGN:
+        {
+            /* The first data byte identifies the compartment the broadcast
+            * message is intended for. Only process the message when it matches
+            * this ECU's current compartment position. The second data byte
+            * contains the product index to be applied to that display.
+            */
+            uint8_t uut_command = data[0];
+            (void)uut_command;
+            __builtin_software_breakpoint();
+        }
 #endif
         /*
          * Add more PGNs here as needed.

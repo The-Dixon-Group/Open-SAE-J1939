@@ -220,7 +220,7 @@ bool CAN_Read_Message(uint32_t* ID, uint8_t data[]) {
 	Callback_Function_Read(ID, data, &is_new_message);
 #elif PROCESSOR_CHOICE == SAMC21
     if(CAN0_RxFifoFillLevelGet(CAN_RX_FIFO_0) != 0)
-    {
+    {        
         //__builtin_software_breakpoint();
         
         //is_new_message = CAN0_MessageReceive(ID, data);
