@@ -12,6 +12,7 @@
 #include "../../Hardware/Hardware.h"
 #include "comms.h"
 #include "definitions.h"
+
 /*
  * Request Proprietary B to another ECU
  * PGN: 0x00FF00 <-> 0x00FFFF
@@ -141,7 +142,6 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
                     // Handle command 0x00 (UUT Reset)
                     SAE_J1939_Send_UUT_Response(j1939,ACK_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
                     NVIC_SystemReset();
-
                     break;
                 }
                 case CMD_01:
@@ -155,9 +155,24 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
                 case CMD_03:
                     // Handle command 0x03
                     break;
-
+                case CMD_2E:
+                    // Handle command 0x2E (Turn All LEDs Red)
+                    BankClearLED((uint32_t)0xFFFF<<4);
+                    BankSetLEDRed((uint32_t)0xFFFF<<4);
+                    SAE_J1939_Send_UUT_Response(j1939,ACK_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
+                    break;     
+                case CMD_2F:
+                    // Handle command 0x2F (Turn All LEDs Green)
+                    BankClearLED((uint32_t)0xFFFF<<4);
+                    BankSetLEDGreen((uint32_t)0xFFFF<<4);
+                    SAE_J1939_Send_UUT_Response(j1939,ACK_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
+                    
+                    break;       
                 case CMD_30:
-                    // Handle command 0x30
+                    // Handle command 0x30 (Turn All LEDs Blue)
+                    BankClearLED((uint32_t)0xFFFF<<4);
+                    BankSetLEDBlue((uint32_t)0xFFFF<<4);
+                    SAE_J1939_Send_UUT_Response(j1939,ACK_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
                     break;
 
                 default:
