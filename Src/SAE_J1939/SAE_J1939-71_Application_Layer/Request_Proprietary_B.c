@@ -131,14 +131,19 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
 #elif PRODUCT == CHECKMATEII_TESTER
         case TEST_FIRMWARE_PGN:
         {
-            /* The first data byte identifies the compartment the broadcast
-            * message is intended for. Only process the message when it matches
-            * this ECU's current compartment position. The second data byte
-            * contains the product index to be applied to that display.
+            /* The first data byte identifies the UUT command the broadcast
+            * message is intended for.
             */
             uint8_t uut_command = data[0];
-            __builtin_software_breakpoint();
             switch(uut_command){
+                case CMD_00:
+                {
+                    // Handle command 0x00 (UUT Reset)
+                    SAE_J1939_Send_UUT_Response(j1939,ACK_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
+                    NVIC_SystemReset();
+
+                    break;
+                }
                 case CMD_01:
                     // Handle command 0x01
                     break;
