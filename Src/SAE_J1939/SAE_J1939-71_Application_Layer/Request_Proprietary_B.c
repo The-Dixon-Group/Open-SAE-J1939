@@ -138,12 +138,11 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
             uint8_t uut_command = data[0];
             switch(uut_command){
                 case CMD_00:
-                {
                     // Handle command 0x00 (UUT Reset)
                     SAE_J1939_Send_UUT_Response(j1939,ACK_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
                     NVIC_SystemReset();
                     break;
-                }
+                
                 case CMD_01:
                     // Handle command 0x01 (non-is relay de-energize)
                     DeEnergizeNONISRelay();
@@ -157,8 +156,44 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
                     break;
 
                 case CMD_03:
-                    // Handle command 0x03
+                    // Handle command 0x03 (Read Aux input 1)
+                    if(GetAuxStatus(AUX1_INPUT)){
+                        SAE_J1939_Send_UUT_Response(j1939,HIGH_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);    
+                    }
+                    else{
+                        SAE_J1939_Send_UUT_Response(j1939,LOW_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
+                    }
                     break;
+                    
+                case CMD_04:
+                    // Handle command 0x04 (Read Aux input 2)
+                    if(GetAuxStatus(AUX2_INPUT)){
+                        SAE_J1939_Send_UUT_Response(j1939,HIGH_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);    
+                    }
+                    else{
+                        SAE_J1939_Send_UUT_Response(j1939,LOW_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
+                    }
+                    break;
+                case CMD_05:
+                    // Handle command 0x05 (Read Aux input 3)
+                    if(GetAuxStatus(AUX3_INPUT)){
+                        SAE_J1939_Send_UUT_Response(j1939,HIGH_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);    
+                    }
+                    else{
+                        SAE_J1939_Send_UUT_Response(j1939,LOW_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
+                    }
+                    break;
+                
+                case CMD_06:
+                    //Handle command 6 (Read retain reset input)
+                    if(GetRetainInputStatus()){
+                       SAE_J1939_Send_UUT_Response(j1939,HIGH_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);  
+                    }
+                    else{
+                       SAE_J1939_Send_UUT_Response(j1939,LOW_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
+                    }
+                    break;
+                    
                 case CMD_2E:
                     // Handle command 0x2E (Turn All LEDs Red)
                     BankClearLED((uint32_t)0xFFFF<<4);
