@@ -145,11 +145,15 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
                     break;
                 }
                 case CMD_01:
-                    // Handle command 0x01
+                    // Handle command 0x01 (non-is relay de-energize)
+                    DeEnergizeNONISRelay();
+                    SAE_J1939_Send_UUT_Response(j1939,ACK_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
                     break;
 
                 case CMD_02:
-                    // Handle command 0x02
+                    // Handle command 0x02 (non-is relay energize)
+                    EnergizeNONISRelay();
+                    SAE_J1939_Send_UUT_Response(j1939,ACK_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
                     break;
 
                 case CMD_03:
