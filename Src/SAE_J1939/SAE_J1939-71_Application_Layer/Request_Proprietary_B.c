@@ -135,7 +135,6 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
             * message is intended for.
             */
             uint8_t uut_command = data[0];
-            float bank_voltage = 0;
             switch(uut_command){
                 case CMD_00:
                     // Handle command 0x00 (UUT Reset)
@@ -193,249 +192,90 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
                        SAE_J1939_Send_UUT_Response(j1939,LOW_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
                     }
                     break;
-                    
+
                 case CMD_07:
-                {
-                    // BANK1 channel 1 -> LED 4
-                    GetSensorBankStatus(BANK1);
-
-                    bank_voltage =
-                        ((float)sensorData.CH_M[BANK1][0].MAX_VOLTAGE / 255.0f)
-                        * 3.30f / 0.2740f;
-
-                    if (SENSOR_VOLTAGE_MIN <= bank_voltage &&
-                        SENSOR_VOLTAGE_MAX >= bank_voltage)
-                    {
-                        __NOP();
-                        SetLEDColor(4, (COLOR_t){DEFAULT_BRIGHTNESS, 0, 0}, 0);
-                    }
-                    else
-                    {
-                        __NOP();
-                        SetLEDColor(4, (COLOR_t){0, DEFAULT_BRIGHTNESS, 0}, 0);
-                    }
-
+                    CheckChannelVoltage(BANK1, 0, 4);
                     break;
-                }
 
                 case CMD_08:
-                {
-                    // BANK1 channel 2 -> LED 5
-                    GetSensorBankStatus(BANK1);
-
-                    bank_voltage =
-                        ((float)sensorData.CH_M[BANK1][1].MAX_VOLTAGE / 255.0f)
-                        * 3.30f / 0.2740f;
-
-                    if (SENSOR_VOLTAGE_MIN <= bank_voltage &&
-                        SENSOR_VOLTAGE_MAX >= bank_voltage)
-                    {
-                        __NOP();
-                        SetLEDColor(5, (COLOR_t){DEFAULT_BRIGHTNESS, 0, 0}, 0);
-                    }
-                    else
-                    {
-                        __NOP();
-                        SetLEDColor(5, (COLOR_t){0, DEFAULT_BRIGHTNESS, 0}, 0);
-                    }
-
+                    CheckChannelVoltage(BANK1, 1, 5);
                     break;
-                }
 
                 case CMD_09:
-                {
-                    // BANK1 channel 3 -> LED 6
-                    GetSensorBankStatus(BANK1);
-
-                    bank_voltage =
-                        ((float)sensorData.CH_M[BANK1][2].MAX_VOLTAGE / 255.0f)
-                        * 3.30f / 0.2740f;
-
-                    if (SENSOR_VOLTAGE_MIN <= bank_voltage &&
-                        SENSOR_VOLTAGE_MAX >= bank_voltage)
-                    {
-                        __NOP();
-                        SetLEDColor(6, (COLOR_t){DEFAULT_BRIGHTNESS, 0, 0}, 0);
-                    }
-                    else
-                    {
-                        __NOP();
-                        SetLEDColor(6, (COLOR_t){0, DEFAULT_BRIGHTNESS, 0}, 0);
-                    }
-
+                    CheckChannelVoltage(BANK1, 2, 6);
                     break;
-                }
 
                 case CMD_0A:
-                {
-                    // BANK1 channel 4 -> LED 7
-                    GetSensorBankStatus(BANK1);
-
-                    bank_voltage =
-                        ((float)sensorData.CH_M[BANK1][3].MAX_VOLTAGE / 255.0f)
-                        * 3.30f / 0.2740f;
-
-                    if (SENSOR_VOLTAGE_MIN <= bank_voltage &&
-                        SENSOR_VOLTAGE_MAX >= bank_voltage)
-                    {
-                        __NOP();
-                        SetLEDColor(7, (COLOR_t){DEFAULT_BRIGHTNESS, 0, 0}, 0);
-                    }
-                    else
-                    {
-                        __NOP();
-                        SetLEDColor(7, (COLOR_t){0, DEFAULT_BRIGHTNESS, 0}, 0);
-                    }
-
+                    CheckChannelVoltage(BANK1, 3, 7);
                     break;
-                }
 
                 case CMD_0B:
-                {
-                    // BANK1 channel 5 -> LED 8 (Low Gain))
-                    
-                    //Set Gain to Low
                     Set5WDiagGain(LOW_GAIN);
-                    
-                    GetSensorBankStatus(BANK1);
-
-                    bank_voltage =
-                        ((float)sensorData.CH_M[BANK1][4].MAX_VOLTAGE / 255.0f)
-                        * 3.30f / 0.2740f;
-
-                    if (SENSOR_VOLTAGE_MIN <= bank_voltage &&
-                        SENSOR_VOLTAGE_MAX >= bank_voltage)
-                    {
-                        __NOP();
-                        SetLEDColor(8, (COLOR_t){DEFAULT_BRIGHTNESS, 0, 0}, 0);
-                    }
-                    else
-                    {
-                        __NOP();
-                        SetLEDColor(8, (COLOR_t){0, DEFAULT_BRIGHTNESS, 0}, 0);
-                    }
-
+                    CheckChannelVoltage(BANK1, 4, 8);
                     break;
-                }
 
                 case CMD_0C:
-                {
-                    // BANK1 channel 5 -> LED 8 (High Gain))
-                    
-                    //Set Gain to HIGH
                     Set5WDiagGain(HIGH_GAIN);
-                    
-                    GetSensorBankStatus(BANK1);
-
-                    bank_voltage =
-                        ((float)sensorData.CH_M[BANK1][4].MAX_VOLTAGE / 255.0f)
-                        * 3.30f / 0.2740f;
-
-                    if (SENSOR_VOLTAGE_MIN <= bank_voltage &&
-                        SENSOR_VOLTAGE_MAX >= bank_voltage)
-                    {
-                        __NOP();
-                        SetLEDColor(8, (COLOR_t){DEFAULT_BRIGHTNESS, 0, 0}, 0);
-                    }
-                    else
-                    {
-                        __NOP();
-                        SetLEDColor(8, (COLOR_t){0, DEFAULT_BRIGHTNESS, 0}, 0);
-                    }
-
+                    CheckChannelVoltage(BANK1, 4, 8);
                     break;
-                }
 
                 case CMD_0D:
-                {
-                    // BANK1 channel 6 -> LED 9
-                    GetSensorBankStatus(BANK1);
-
-                    bank_voltage =
-                        ((float)sensorData.CH_M[BANK1][5].MAX_VOLTAGE / 255.0f)
-                        * 3.30f / 0.2740f;
-
-                    if (SENSOR_VOLTAGE_MIN <= bank_voltage &&
-                        SENSOR_VOLTAGE_MAX >= bank_voltage)
-                    {
-                        __NOP();
-                        SetLEDColor(9, (COLOR_t){DEFAULT_BRIGHTNESS, 0, 0}, 0);
-                    }
-                    else
-                    {
-                        __NOP();
-                        SetLEDColor(9, (COLOR_t){0, DEFAULT_BRIGHTNESS, 0}, 0);
-                    }
-
+                    CheckChannelVoltage(BANK1, 5, 9);
                     break;
-                }
 
                 case CMD_0E:
-                {
-                    // BANK1 channel 7 -> LED 10
-                    GetSensorBankStatus(BANK1);
-
-                    bank_voltage =
-                        ((float)sensorData.CH_M[BANK1][6].MAX_VOLTAGE / 255.0f)
-                        * 3.30f / 0.2740f;
-
-                    if (SENSOR_VOLTAGE_MIN <= bank_voltage &&
-                        SENSOR_VOLTAGE_MAX >= bank_voltage)
-                    {
-                        __NOP();
-                        SetLEDColor(10, (COLOR_t){DEFAULT_BRIGHTNESS, 0, 0}, 0);
-                    }
-                    else
-                    {
-                        __NOP();
-                        SetLEDColor(10, (COLOR_t){0, DEFAULT_BRIGHTNESS, 0}, 0);
-                    }
-
+                    CheckChannelVoltage(BANK1, 6, 10);
                     break;
-                }
 
                 case CMD_0F:
-                {
-                    // BANK1 channel 8 -> LED 11
-                    GetSensorBankStatus(BANK1);
-
-                    bank_voltage =
-                        ((float)sensorData.CH_M[BANK1][7].MAX_VOLTAGE / 255.0f)
-                        * 3.30f / 0.2740f;
-
-                    if (SENSOR_VOLTAGE_MIN <= bank_voltage &&
-                        SENSOR_VOLTAGE_MAX >= bank_voltage)
-                    {
-                        __NOP();
-                        SetLEDColor(11, (COLOR_t){DEFAULT_BRIGHTNESS, 0, 0}, 0);
-                    }
-                    else
-                    {
-                        __NOP();
-                        SetLEDColor(11, (COLOR_t){0, DEFAULT_BRIGHTNESS, 0}, 0);
-                    }
-
+                    CheckChannelVoltage(BANK1, 7, 11);
                     break;
-                }
                 
                 case CMD_10:
                     // Handle command 0x10 (set optic out)
-                    DAC_DataWrite(Voltage2DACCounts(12.0));
-                    
+                    DAC_DataWrite(Voltage2DACCounts(12.0));            
                     //Send ACK
                     SAE_J1939_Send_UUT_Response(j1939,ACK_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
-                    
                     break;
                     
                  case CMD_11:
                     // Handle command 0x11 (clear optic out)
-                    DAC_DataWrite(Voltage2DACCounts(12.0));
-                    
+                    DAC_DataWrite(Voltage2DACCounts(0.0)); 
                     //Send ACK
                     SAE_J1939_Send_UUT_Response(j1939,ACK_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
+                    break; 
                     
-                    break;      
-                    
+                case CMD_12:
+                    CheckChannelVoltage(BANK0, 0, 12);
+                    break;
+
+                case CMD_13:
+                    CheckChannelVoltage(BANK0, 1, 13);
+                    break;
+
+                case CMD_14:
+                    CheckChannelVoltage(BANK0, 2, 14);
+                    break;
+
+                case CMD_15:
+                    CheckChannelVoltage(BANK0, 3, 15);
+                    break;
+
+                case CMD_16:
+                    CheckChannelVoltage(BANK0, 4, 16);
+                    break;
+
+                case CMD_17:
+                    CheckChannelVoltage(BANK0, 5, 17);
+                    break;
+
+                case CMD_18:
+                    CheckChannelVoltage(BANK0, 6, 18);
+                    break;
+
+                case CMD_19:
+                    CheckChannelVoltage(BANK0, 7, 19);
+                    break;                                                                                                                                                                                   
                 case CMD_2E:
                     // Handle command 0x2E (Turn All LEDs Red)
                     BankClearLED((uint32_t)0xFFFF<<4);
