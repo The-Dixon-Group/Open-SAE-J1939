@@ -289,11 +289,17 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
                     SAE_J1939_Send_UUT_Response(j1939,ACK_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
                     break;
                     
+                 case CMD_2D:
+                    // Handle command 0x2D (Turn off all lights)
+                    for (int i = 0; i < 20; i++){
+                        SetLEDColor(i, (COLOR_t){0, 0, 0}, 0);
+                    }
+                    //Send Acknowledgement
+                    SAE_J1939_Send_UUT_Response(j1939,ACK_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
+                    break;     
+                    
                 case CMD_2E:
                     // Handle command 0x2E (Turn All LEDs Red)
-                    BankClearLED((uint32_t)0xFFFF<<4);
-                    
-
                     for (int i = 0; i < 20; i++){
                         SetLEDColor(i, (COLOR_t){0, DEFAULT_BRIGHTNESS, 0}, 0);
                     }
@@ -303,9 +309,6 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
                     break;     
                 case CMD_2F:
                     // Handle command 0x2F (Turn All LEDs Green)
-                    BankClearLED((uint32_t)0xFFFF<<4);
-                    
-                    //Set All LEDs
                     for (int i = 0; i < 20; i++){
                         SetLEDColor(i, (COLOR_t){DEFAULT_BRIGHTNESS, 0, 0}, 0);
                     }
@@ -316,9 +319,6 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
                     break;       
                 case CMD_30:
                     // Handle command 0x30 (Turn All LEDs Blue)
-                    BankClearLED((uint32_t)0xFFFF<<4);
-                    
-                    //Set All LEDs
                     for (int i = 0; i < 20; i++){
                         SetLEDColor(i, (COLOR_t){0, 0, DEFAULT_BRIGHTNESS}, 0);
                     }
