@@ -138,7 +138,9 @@ void SAE_J1939_Read_Response_Request_Proprietary_B(J1939* j1939, uint8_t SA, uin
             switch(uut_command){
                 case CMD_00:
                     // Handle command 0x00 (UUT Reset)
-                    SAE_J1939_Send_UUT_Response(j1939,ACK_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);
+                    SAE_J1939_Send_UUT_Response(j1939,ACK_RESPONSE,SYSTEM_STATUS_DEFAULT_PRIORITY);              
+                    //Delay for message to send
+                    vTaskDelay(100 / portTICK_PERIOD_MS);
                     NVIC_SystemReset();
                     break;
                 
